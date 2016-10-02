@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "metrics"
+exit 0

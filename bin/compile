@@ -1,0 +1,8 @@
+#!/bin/bash
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+cp bin/begin ${BUILD_DIR}/bin/
+cp bin/statsdaemon ${BUILD_DIR}/bin/
