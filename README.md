@@ -9,25 +9,12 @@ heroku addons:create heroku-metrics:test
 heroku buildpacks:add https://github.com/cyx/heroku-buildpack-metrics
 ```
 
-## Step 2: Update your Procfile
-
-If it was something like this before:
-
-```
-web: rackup -p $PORT
-```
-
-Simply change it to:
-
-```
-web: begin rackup -p $PORT
-```
-
-The `begin` bash wrapper will simply start up the `statsdaemon`, which you can post things to in `localhost:8125`.
-See the relevant docs on `statsd` for how to post to the UDP protocol.
-
-## Step 3: Redeploy your app
+## Step 2: Redeploy your app
 
 ```
 git push heroku master
 ```
+
+## Step 3: Start shipping metrics to `localhost:8125`
+
+Use your favorite statds client of choice for that.
