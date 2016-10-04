@@ -6,7 +6,7 @@ For use with the `heroku-metrics` addon (still in alpha)
 ```
 cd ~/path/to/heroku-app
 heroku addons:create heroku-metrics:test
-heroku buildpacks:add https://github.com/cyx/heroku-buildack-metrics
+heroku buildpacks:add https://github.com/cyx/heroku-buildpack-metrics
 ```
 
 ## Step 2: Update your Procfile
