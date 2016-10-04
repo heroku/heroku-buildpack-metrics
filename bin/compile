@@ -4,5 +4,9 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-cp bin/begin ${BUILD_DIR}/bin/
+echo "-----> Copying the statsdaemon..."
 cp bin/statsdaemon ${BUILD_DIR}/bin/
+
+echo "-----> Setting up environment"
+mkdir -p $BUILD_DIR/.profile.d
+cp .profile.d/statsdaemon.sh $BUILD_DIR/.profile.d
