@@ -7,10 +7,8 @@ ENV_DIR=$3
 echo '-----> Copying required binaries statsdaemon, get-random-port'
 cp bin/statsdaemon ${BUILD_DIR}/bin/
 cp bin/get-random-port ${BUILD_DIR}/bin/
+cp bin/metrics-poller ${BUILD_DIR}/bin/
 
-echo '-----> Setting up .profile.d to automatically run statsdaemon'
+echo '-----> Setting up .profile.d to automatically run the metrics daemon'
 mkdir -p $BUILD_DIR/.profile.d
-cp .profile.d/statsdaemon.sh $BUILD_DIR/.profile.d
-
-echo '       You are all set!'
-echo '       Use $HEROKU_STATSD_PORT for emitting UDP statsd metrics'
+cp .profile.d/heroku-metrics-daemon.sh $BUILD_DIR/.profile.d
