@@ -5,6 +5,10 @@ CACHE_DIR=$2
 ENV_DIR=$3
 
 echo '-----> Copying required binaries statsdaemon, get-random-port'
+# Ensure the bin folder exists, if not already.
+mkdir -p ${BUILD_DIR}/bin
+
+# Copy all binaries
 cp bin/statsdaemon ${BUILD_DIR}/bin/
 cp bin/get-random-port ${BUILD_DIR}/bin/
 cp bin/metrics-poller ${BUILD_DIR}/bin/
