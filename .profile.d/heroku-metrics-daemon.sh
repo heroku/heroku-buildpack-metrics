@@ -22,7 +22,11 @@ if [ "${AGENTMON_DEBUG}" = "true" ]; then
 fi
 
 if [ -x "./bin/agentmon" ]; then
-    ./bin/agentmon ${AGENTMON_FLAGS} ${HEROKU_METRICS_URL}
+    (while true; do
+        ./bin/agentmon ${AGENTMON_FLAGS} ${HEROKU_METRICS_URL}
+        echo "agentmon completed with status=${?}. Restarting"
+        sleep 1
+    done) &
 else
     echo "No agentmon executable found. Not starting."
 fi
