@@ -18,7 +18,7 @@ else
 fi
 
 if [ -x "./bin/agentmon" ]; then
-    ./bin/agentmon "$@" $HEROKU_METRICS_URL
+    ./bin/agentmon ${AGENT_MON_FLAGS} ${HEROKU_METRICS_URL}
 else
     echo "No agentmon executable found. Not starting."
 fi
