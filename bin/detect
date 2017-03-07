@@ -1,4 +1,9 @@
 #!/bin/bash
 
-echo "metrics"
-exit 0
+# this is currently only valid for Java apps.
+if [ -f pom.xml ]; then
+    echo "HerokuRuntimeMetrics"
+    exit 0
+else
+    exit 1
+fi

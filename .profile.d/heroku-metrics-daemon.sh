@@ -1,20 +1,24 @@
 #!/bin/bash
 
-export HEROKU_PROM_METRICS_ENDPOINT=${HEROKU_PROM_METRICS_ENDPOINT:-/metrics}
-export HEROKU_PROM_METRICS_PORT=$(./bin/get-random-port)
-export HEROKU_PROM_METRICS_POLL_INTERVAL=${HEROKU_PROM_METRICS_POLL_INTERVAL:-5}
-
-if [ -f pom.xml ]; then
-	export JAVA_TOOL_OPTIONS="-javaagent:bin/heroku-metrics-agent.jar ${JAVA_TOOL_OPTIONS}"
+# don't do anything if we don't have a metrics url.
+if [ -z "$HEROKU_METRICS_URL" ]; then
+    exit 1
 fi
 
-if [ -z "$HEROKU_METRICS_USE_STATSD" ]; then
-	./bin/metrics-poller \
-		-scrape-url "http://localhost:${HEROKU_PROM_METRICS_PORT}${HEROKU_PROM_METRICS_ENDPOINT}" \
-		-url $HEROKU_METRICS_URL \
-		-instance ${DYNO} \
-		-interval ${HEROKU_PROM_METRICS_POLL_INTERVAL} &
+export HEROKU_METRICS_PROM_ENDPOINT=${HEROKU_METRICS_PROM_ENDPOINT:-/metrics}
+export HEROKU_METRICS_PROM_PORT=$(expr $PORT + 1)
+export HEROKU_PROM_METRICS_ENDPOINT=${HEROKU_METRICS_PROM_ENDPOINT}
+export HEROKU_PROM_METRICS_PORT=${HEROKU_METRICS_PROM_PORT}
+
+if [ -f pom.xml ]; then
+    export JAVA_TOOL_OPTIONS="-javaagent:bin/heroku-metrics-agent.jar ${JAVA_TOOL_OPTIONS}"
+    AGENT_MON_FLAGS="-prom-url http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}"
 else
-	export HEROKU_STATSD_PORT=$(get-random-port)
-	./bin/statsdaemon -address ":${HEROKU_STATSD_PORT}" -export-url ${HEROKU_METRICS_URL} -instance ${DYNO} &
+    AGENT_MON_FLAGS="-statsd-addr :${PORT}"
+fi
+
+if [ -x "./bin/agentmon" ]; then
+    ./bin/agentmon "$@" $HEROKU_METRICS_URL
+else
+    echo "No agentmon executable found. Not starting."
 fi
