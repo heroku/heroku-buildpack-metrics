@@ -12,13 +12,17 @@ export HEROKU_PROM_METRICS_PORT=${HEROKU_METRICS_PROM_PORT}
 
 if [ -f pom.xml ]; then
     export JAVA_TOOL_OPTIONS="-javaagent:bin/heroku-metrics-agent.jar ${JAVA_TOOL_OPTIONS}"
-    AGENT_MON_FLAGS="-prom-url http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}"
+    AGENTMON_FLAGS="-prom-url http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}"
 else
-    AGENT_MON_FLAGS="-statsd-addr :${PORT}"
+    AGENTMON_FLAGS="-statsd-addr :${PORT}"
+fi
+
+if [ "${AGENTMON_DEBUG}" = "true" ]; then
+    AGENTMON_FLAGS="${AGENTMON_FLAGS} -debug"
 fi
 
 if [ -x "./bin/agentmon" ]; then
-    ./bin/agentmon ${AGENT_MON_FLAGS} ${HEROKU_METRICS_URL}
+    ./bin/agentmon ${AGENTMON_FLAGS} ${HEROKU_METRICS_URL}
 else
     echo "No agentmon executable found. Not starting."
 fi
