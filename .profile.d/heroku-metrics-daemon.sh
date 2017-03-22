@@ -2,7 +2,7 @@
 
 # don't do anything if we don't have a metrics url.
 if [ -z "$HEROKU_METRICS_URL" ]; then
-    exit 1
+    exit 0
 fi
 
 export HEROKU_METRICS_PROM_ENDPOINT=${HEROKU_METRICS_PROM_ENDPOINT:-/metrics}
