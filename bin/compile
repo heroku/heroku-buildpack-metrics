@@ -1,7 +1,7 @@
 #!/bin/bash
 
 arrow() {
-  echo '-----> ' "$@"
+  echo '----->' "$@"
 }
 
 indent() {
@@ -9,35 +9,15 @@ indent() {
 }
 
 BUILD_DIR=$1
-CACHE_DIR=$2
-ENV_DIR=$3
-
-arrow "Downloading required binaries agentmon"
-arrow "Finding latest release URL"
-
-DOWNLOAD_URL=$(curl --retry 3 -s https://api.github.com/repos/heroku/agentmon/releases/latest | grep "browser_download_url" | awk -F': ' '{print $2}' | sed -e 's/"//g')
-if [ -z "${DOWNLOAD_URL}" ]; then
-    arrow "!!!!! Failed to find latest agentmon."
-    exit 1
-fi
-
-BASENAME=$(basename ${DOWNLOAD_URL})
-
-curl -L --retry 3 -o ${BUILD_DIR}${BASENAME} ${DOWNLOAD_URL}
-
-# Ensure the bin folder exists, if not already.
-mkdir -p ${BUILD_DIR}/bin
-
-# Extract agentmon release
-tar -C ${BUILD_DIR}/bin -zxf ${BUILD_DIR}${BASENAME}
-chmod +x ${BUILD_DIR}/bin/agentmon
+#CACHE_DIR=$2
+#ENV_DIR=$3
 
 arrow "Setting up .profile.d to automatically run agentmon..."
+mkdir -p "${BUILD_DIR}/.profile.d"
+cp .profile.d/heroku-metrics-daemon.sh "${BUILD_DIR}/.profile.d"
 
-mkdir -p ${BUILD_DIR}/.profile.d
-cp .profile.d/heroku-metrics-daemon.sh $BUILD_DIR/.profile.d
-
-if [ -f ${BUILD_DIR}/pom.xml ]; then
-  arrow "Installing Java metrics agent"
-  curl --retry 3 -s -o $BUILD_DIR/bin/heroku-metrics-agent.jar -L https://lang-jvm.s3.amazonaws.com/heroku-metrics-agent.jar
+if [[ -f "${BUILD_DIR}/pom.xml" ]]; then
+    arrow "Installing Java metrics agent"
+    mkdir -p "${BUILD_DIR}/bin/"
+    curl --retry 3 -s -o "${BUILD_DIR}/bin/heroku-metrics-agent.jar" -L https://lang-jvm.s3.amazonaws.com/heroku-metrics-agent.jar
 fi

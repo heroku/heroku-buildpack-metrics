@@ -10,9 +10,31 @@ export HEROKU_METRICS_PROM_PORT=$((PORT + 1))
 export HEROKU_PROM_METRICS_ENDPOINT=${HEROKU_METRICS_PROM_ENDPOINT}
 export HEROKU_PROM_METRICS_PORT=${HEROKU_METRICS_PROM_PORT}
 
+STARTTIME=$(date +%s)
+BUILD_DIR=/tmp
+DOWNLOAD_URL=$(curl --retry 3 -s https://api.github.com/repos/heroku/agentmon/releases/latest | grep "browser_download_url" | awk -F': ' '{print $2}' | sed -e 's/"//g')
+if [ -z "${DOWNLOAD_URL}" ]; then
+    echo "!!!!! Failed to find latest agentmon. Please report this as a bug. Metrics collection will be disabled this run."
+    return 0
+fi
+
+BASENAME=$(basename "${DOWNLOAD_URL}")
+
+curl -L --retry 3 -o "${BUILD_DIR}/${BASENAME}" "${DOWNLOAD_URL}"
+
+# Ensure the bin folder exists, if not already.
+mkdir -p "${BUILD_DIR}/bin"
+
+# Extract agentmon release
+tar -C "${BUILD_DIR}/bin" -zxf "${BUILD_DIR}/${BASENAME}"
+chmod +x "${BUILD_DIR}/bin/agentmon"
+
+ELAPSEDTIME=$(($(date +%s) - STARTTIME))
+echo "agentmon setup took ${ELAPSEDTIME} seconds"
+
 AGENTMON_FLAGS=()
 
-if [[ -f pom.xml ]]; then
+if [ -f pom.xml ]; then
     export JAVA_TOOL_OPTIONS="-javaagent:bin/heroku-metrics-agent.jar ${JAVA_TOOL_OPTIONS}"
     AGENTMON_FLAGS+=("-prom-url=http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}")
 else
@@ -23,9 +45,9 @@ if [[ "${AGENTMON_DEBUG}" = "true" ]]; then
     AGENTMON_FLAGS+=("-debug")
 fi
 
-if [[ -x "./bin/agentmon" ]]; then
+if [[ -x "${BUILD_DIR}/bin/agentmon" ]]; then
     (while true; do
-        ./bin/agentmon "${AGENTMON_FLAGS[@]}" "${HEROKU_METRICS_URL}"
+        ${BUILD_DIR}/bin/agentmon "${AGENTMON_FLAGS[@]}" "${HEROKU_METRICS_URL}"
         echo "agentmon completed with status=${?}. Restarting"
         sleep 1
     done) &
