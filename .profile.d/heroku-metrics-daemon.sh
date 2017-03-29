@@ -10,20 +10,22 @@ export HEROKU_METRICS_PROM_PORT=$((PORT + 1))
 export HEROKU_PROM_METRICS_ENDPOINT=${HEROKU_METRICS_PROM_ENDPOINT}
 export HEROKU_PROM_METRICS_PORT=${HEROKU_METRICS_PROM_PORT}
 
+AGENTMON_FLAGS=()
+
 if [[ -f pom.xml ]]; then
     export JAVA_TOOL_OPTIONS="-javaagent:bin/heroku-metrics-agent.jar ${JAVA_TOOL_OPTIONS}"
-    AGENTMON_FLAGS="-prom-url http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}"
+    AGENTMON_FLAGS+=("-prom-url=http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}")
 else
-    AGENTMON_FLAGS="-statsd-addr :${PORT}"
+    AGENTMON_FLAGS+=("-statsd-addr=:${PORT}")
 fi
 
 if [[ "${AGENTMON_DEBUG}" = "true" ]]; then
-    AGENTMON_FLAGS="${AGENTMON_FLAGS} -debug"
+    AGENTMON_FLAGS+=("-debug")
 fi
 
 if [[ -x "./bin/agentmon" ]]; then
     (while true; do
-        ./bin/agentmon "${AGENTMON_FLAGS}" "${HEROKU_METRICS_URL}"
+        ./bin/agentmon "${AGENTMON_FLAGS[@]}" "${HEROKU_METRICS_URL}"
         echo "agentmon completed with status=${?}. Restarting"
         sleep 1
     done) &
