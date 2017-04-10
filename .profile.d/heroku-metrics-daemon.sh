@@ -32,8 +32,12 @@ echo "agentmon setup took ${ELAPSEDTIME} seconds"
 
 AGENTMON_FLAGS=()
 
-if [ -f pom.xml ]; then
+if [ -f pom.xml ] || [ -f build.gradle ]; then
     export JAVA_TOOL_OPTIONS="-javaagent:bin/heroku-metrics-agent.jar ${JAVA_TOOL_OPTIONS}"
+    AGENTMON_FLAGS+=("-prom-url=http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}")
+elif [ -f build.sbt ]; then
+    unzip -qq bin/heroku-metrics-agent.jar 'javax/*' -d bin/ext/
+    export JAVA_OPTS="-javaagent:bin/heroku-metrics-agent.jar=cp=/app/bin/ext/ -Xbootclasspath/a:bin/heroku-metrics-agent.jar ${JAVA_OPTS}"
     AGENTMON_FLAGS+=("-prom-url=http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}")
 else
     AGENTMON_FLAGS+=("-statsd-addr=:${PORT}")
