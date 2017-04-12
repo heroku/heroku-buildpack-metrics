@@ -32,7 +32,7 @@ echo "agentmon setup took ${ELAPSEDTIME} seconds"
 
 AGENTMON_FLAGS=()
 
-if [ -f pom.xml ] || [ -f build.gradle ]; then
+if [ -f pom.xml ] || [ -f build.gradle ] || [ -d .jdk ]; then
     export JAVA_TOOL_OPTIONS="-javaagent:bin/heroku-metrics-agent.jar ${JAVA_TOOL_OPTIONS}"
     AGENTMON_FLAGS+=("-prom-url=http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}")
 elif [ -f build.sbt ]; then
