@@ -16,7 +16,7 @@ arrow "Setting up .profile.d to automatically run agentmon..."
 mkdir -p "${BUILD_DIR}/.profile.d"
 cp .profile.d/heroku-metrics-daemon.sh "${BUILD_DIR}/.profile.d"
 
-if [[ -f "${BUILD_DIR}/pom.xml" ]] || [[ -f "${BUILD_DIR}/build.gradle" ]] || [[ -f "${BUILD_DIR}/build.sbt" ]]; then
+if [[ -f "${BUILD_DIR}/pom.xml" ]] || [[ -f "${BUILD_DIR}/build.gradle" ]] || [[ -f "${BUILD_DIR}/build.sbt" ]] || [[ -d "${BUILD_DIR}/.jdk" ]]; then
     arrow "Installing Java metrics agent"
     mkdir -p "${BUILD_DIR}/bin/"
     curl --retry 3 -s -o "${BUILD_DIR}/bin/heroku-metrics-agent.jar" -L https://lang-jvm.s3.amazonaws.com/heroku-metrics-agent-1.9.jar
