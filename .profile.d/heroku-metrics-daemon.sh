@@ -10,7 +10,8 @@ export HEROKU_METRICS_PROM_PORT=$((PORT + 1))
 
 STARTTIME=$(date +%s)
 BUILD_DIR=/tmp
-DOWNLOAD_URL=$(curl --retry 3 -s https://api.github.com/repos/heroku/agentmon/releases/latest | grep "browser_download_url" | awk -F': ' '{print $2}' | sed -e 's/"//g')
+
+DOWNLOAD_URL=$(curl --retry 3 -s https://agentmon-releases.s3.amazonaws.com/latest)
 if [ -z "${DOWNLOAD_URL}" ]; then
     echo "!!!!! Failed to find latest agentmon. Please report this as a bug. Metrics collection will be disabled this run."
     return 0
