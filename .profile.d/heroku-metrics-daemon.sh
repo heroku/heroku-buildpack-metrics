@@ -25,7 +25,7 @@ curl -L --retry 3 -o "${BUILD_DIR}/${BASENAME}" "${DOWNLOAD_URL}"
 mkdir -p "${BUILD_DIR}/bin"
 
 # Extract agentmon release
-tar -C "${BUILD_DIR}/bin" -zxf "${BUILD_DIR}/${BASENAME}"
+tar --warning=no-unknown-keyword -C "${BUILD_DIR}/bin" -zxf "${BUILD_DIR}/${BASENAME}"
 chmod +x "${BUILD_DIR}/bin/agentmon"
 
 ELAPSEDTIME=$(($(date +%s) - STARTTIME))
