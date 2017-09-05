@@ -22,3 +22,15 @@ poll and forward to `$HEROKU_METRICS_URL`, for processing.
 The [.profile.d/](https://devcenter.heroku.com/articles/dynos#the-profile-file) script downloads the latest agentmon release, and
 starts it on Dyno boot.
 
+## Releasing
+
+If you belong to the Heroku org, you can release a new version of the buildpack
+by running the following command:
+
+```
+$ git reset --hard origin/master
+$ heroku buildkits:publish heroku/metrics
+```
+
+This will publish whatever is in the repo (including dirty changes), which is why
+we suggest running `git reset` first.
