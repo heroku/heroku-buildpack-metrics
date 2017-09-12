@@ -4,13 +4,23 @@ arrow() {
   echo '----->' "$@"
 }
 
-indent() {
-  sed -u 's/^/       /'
-}
-
 BUILD_DIR=$1
 #CACHE_DIR=$2
 #ENV_DIR=$3
+
+# Needs to be kept in sync with https://github.com/heroku/heroku-buildpack-go/blob/master/bin/detect#L7-L10
+if test -f "${BUILD_DIR}/Godeps/Godeps.json" || # godeps
+   test -f "${BUILD_DIR}/vendor/vendor.json" || # govendor
+   test -f "${BUILD_DIR}/glide.yaml" || # glide
+   (test -d "${BUILD_DIR}/src" && test -n "$(find "${BUILD_DIR}/src" -mindepth 2 -type f -name '*.go' | sed 1q)") # gb
+then
+    # Go doesn't need anything setup by this buildpack
+    # but it does need the buildpack in the detected list
+    # to flag other systems that metrics are enabled.
+    # See the Go section of:
+    # https://devcenter.heroku.com/articles/language-runtime-metrics
+    exit 0
+fi
 
 arrow "Setting up .profile.d to automatically run agentmon..."
 mkdir -p "${BUILD_DIR}/.profile.d"
