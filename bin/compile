@@ -19,6 +19,7 @@ cp .profile.d/heroku-metrics-daemon.sh "${BUILD_DIR}/.profile.d"
 if [[ -f "${BUILD_DIR}/pom.xml" ]] ||
    [[ -f "${BUILD_DIR}/build.gradle" ]] ||
    [[ -f "${BUILD_DIR}/build.sbt" ]] ||
+   [[ -d "${BUILD_DIR}/target/resolution-cache" ]] ||
    [[ -f "${BUILD_DIR}/project.clj" ]] ||
    [[ -d "${BUILD_DIR}/.jdk" ]]; then
     arrow "Installing Java metrics agent"

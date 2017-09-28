@@ -33,7 +33,7 @@ echo "agentmon setup took ${ELAPSEDTIME} seconds"
 
 AGENTMON_FLAGS=()
 
-if [[ -f build.sbt ]]; then
+if [[ -f build.sbt ]] || [[ -d target/resolution-cache ]]; then
     unzip -qq bin/heroku-metrics-agent.jar 'javax/*' -d bin/ext/
     export JAVA_OPTS="-javaagent:bin/heroku-metrics-agent.jar=cp=/app/bin/ext/ -Xbootclasspath/a:bin/heroku-metrics-agent.jar ${JAVA_OPTS}"
     AGENTMON_FLAGS+=("-prom-url=http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}")
