@@ -19,7 +19,7 @@ fi
 
 BASENAME=$(basename "${DOWNLOAD_URL}")
 
-curl -L --retry 3 -o "${BUILD_DIR}/${BASENAME}" "${DOWNLOAD_URL}"
+curl -L --retry 3 -s -o "${BUILD_DIR}/${BASENAME}" "${DOWNLOAD_URL}"
 
 # Ensure the bin folder exists, if not already.
 mkdir -p "${BUILD_DIR}/bin"
