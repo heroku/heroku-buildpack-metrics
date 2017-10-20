@@ -34,3 +34,13 @@ $ heroku buildkits:publish heroku/metrics
 
 This will publish whatever is in the repo (including dirty changes), which is why
 we suggest running `git reset` first.
+
+## Testing
+
+This buildpack uses [Hatchet](https://github.com/heroku/hatchet) to run integration tests. To run them local
+make sure you have [Ruby](https://www.ruby-lang.org/) installed, then execute:
+
+```sh-session
+$ bundle install
+$ bundle exec rspec spec/
+```
