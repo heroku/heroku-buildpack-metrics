@@ -35,10 +35,10 @@ AGENTMON_FLAGS=()
 
 if [[ -f build.sbt ]] || [[ -d target/resolution-cache ]]; then
     unzip -qq bin/heroku-metrics-agent.jar 'javax/*' -d bin/ext/
-    export JAVA_OPTS="-javaagent:bin/heroku-metrics-agent.jar=cp=/app/bin/ext/ -Xbootclasspath/a:bin/heroku-metrics-agent.jar ${JAVA_OPTS}"
+    export JAVA_OPTS="-javaagent:/app/bin/heroku-metrics-agent.jar=cp=/app/bin/ext/ -Xbootclasspath/a:/app/bin/heroku-metrics-agent.jar ${JAVA_OPTS}"
     AGENTMON_FLAGS+=("-prom-url=http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}")
 elif [[ -f pom.xml ]] || [[ -f build.gradle ]] || [[ -f project.clj ]] || [[ -d .jdk ]]; then
-    export JAVA_TOOL_OPTIONS="-javaagent:bin/heroku-metrics-agent.jar ${JAVA_TOOL_OPTIONS}"
+    export JAVA_TOOL_OPTIONS="-javaagent:/app/bin/heroku-metrics-agent.jar ${JAVA_TOOL_OPTIONS}"
     AGENTMON_FLAGS+=("-prom-url=http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}")
 else
     AGENTMON_FLAGS+=("-statsd-addr=:${PORT}")
