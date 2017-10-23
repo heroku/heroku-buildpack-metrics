@@ -21,6 +21,7 @@ if [[ -f "${BUILD_DIR}/pom.xml" ]] ||
    [[ -f "${BUILD_DIR}/build.sbt" ]] ||
    [[ -d "${BUILD_DIR}/target/resolution-cache" ]] ||
    [[ -f "${BUILD_DIR}/project.clj" ]] ||
+   [[ -f "${BUILD_DIR}/target/dependency/webapp-runner.jar" ]] ||
    [[ -d "${BUILD_DIR}/.jdk" ]]; then
     arrow "Installing Java metrics agent"
     mkdir -p "${BUILD_DIR}/bin/"
