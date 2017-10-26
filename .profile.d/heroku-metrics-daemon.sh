@@ -33,18 +33,18 @@ echo "agentmon setup took ${ELAPSEDTIME} seconds"
 
 AGENTMON_FLAGS=()
 
-
+# heroku-metrics-agent.jar is added in bin/compile
 if [[ -f bin/heroku-metrics-agent.jar ]]; then
-    if [[ -f build.sbt ]] ||
-       [[ -d target/resolution-cache ]]; then
+    if [[ -f build.sbt ]] || # Scala
+       [[ -d target/resolution-cache ]]; then # Scala (sbt-heroku)
         unzip -qq bin/heroku-metrics-agent.jar 'javax/*' -d bin/ext/
         export JAVA_OPTS="-javaagent:bin/heroku-metrics-agent.jar=cp=/app/bin/ext/ -Xbootclasspath/a:bin/heroku-metrics-agent.jar ${JAVA_OPTS}"
         AGENTMON_FLAGS+=("-prom-url=http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}")
-    elif [[ -f pom.xml ]] ||
-         [[ -f build.gradle ]] ||
-         [[ -f project.clj ]] ||
-         [[ -f target/dependency/webapp-runner.jar ]] ||
-         [[ -d .jdk ]]; then
+    elif [[ -f pom.xml ]] || # Maven
+         [[ -f build.gradle ]] || # Gradle
+         [[ -f project.clj ]] || # Clojure
+         [[ -f target/dependency/webapp-runner.jar ]] || # Tomcat
+         [[ -d .jdk ]]; then # heroku/jvm
         export JAVA_TOOL_OPTIONS="-javaagent:bin/heroku-metrics-agent.jar ${JAVA_TOOL_OPTIONS}"
         AGENTMON_FLAGS+=("-prom-url=http://localhost:${HEROKU_METRICS_PROM_PORT}${HEROKU_METRICS_PROM_ENDPOINT}")
     fi
