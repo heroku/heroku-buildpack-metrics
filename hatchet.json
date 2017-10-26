@@ -1,0 +1,14 @@
+{
+  "hatchet": {
+    "directory": "spec/fixtures"
+  },
+  "gradle": [
+    "heroku/gradle-getting-started"
+  ],
+  "java": [
+    "heroku/java-getting-started"
+  ],
+  "scala": [
+    "heroku/scala-getting-started"
+  ]
+}
