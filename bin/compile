@@ -12,7 +12,7 @@ BUILD_DIR=$1
 #CACHE_DIR=$2
 #ENV_DIR=$3
 
-arrow "Setting up .profile.d to automatically run agentmon..."
+arrow "Setting up .profile.d to automatically run metrics agent..."
 mkdir -p "${BUILD_DIR}/.profile.d"
 cp .profile.d/heroku-metrics-daemon.sh "${BUILD_DIR}/.profile.d"
 
@@ -25,5 +25,10 @@ if [[ -f "${BUILD_DIR}/pom.xml" ]] || # Maven
    [[ -d "${BUILD_DIR}/.jdk" ]]; then # heroku/jvm
     arrow "Installing Java metrics agent"
     mkdir -p "${BUILD_DIR}/bin/"
-    curl --retry 3 -s -o "${BUILD_DIR}/bin/heroku-metrics-agent.jar" -L https://lang-jvm.s3.amazonaws.com/heroku-metrics-agent-2.0.jar
+    agent_jar="${BUILD_DIR}/bin/heroku-metrics-agent.jar"
+    curl --retry 3 -s -o ${agent_jar} \
+      -L ${HEROKU_METRICS_JAR_URL:-"http://repo1.maven.org/maven2/com/heroku/agent/heroku-java-metrics-agent/3.0/heroku-java-metrics-agent-3.0.jar"}
+    if [[ ! -f ${agent_jar} ]]; then
+        indent "WARNING: failed to install metrics agent!"
+    fi
 fi
