@@ -14,9 +14,6 @@ if [[ -f ${HOME}/bin/heroku-metrics-agent.jar ]]; then
         export JAVA_TOOL_OPTIONS="-javaagent:${HOME}/bin/heroku-metrics-agent.jar ${JAVA_TOOL_OPTIONS}"
     fi
 else
-    export HEROKU_METRICS_PROM_ENDPOINT=${HEROKU_METRICS_PROM_ENDPOINT:-/metrics}
-    export HEROKU_METRICS_PROM_PORT=$((PORT + 1))
-
     STARTTIME=$(date +%s)
     BUILD_DIR=/tmp
 
@@ -40,10 +37,7 @@ else
     ELAPSEDTIME=$(($(date +%s) - STARTTIME))
     echo "agentmon setup took ${ELAPSEDTIME} seconds"
 
-    AGENTMON_FLAGS=()
-
-    AGENTMON_FLAGS+=("-statsd-addr=:${PORT}")
-
+    AGENTMON_FLAGS=("-statsd-addr=:${PORT}")
 
     if [[ "${AGENTMON_DEBUG}" = "true" ]]; then
         AGENTMON_FLAGS+=("-debug")
