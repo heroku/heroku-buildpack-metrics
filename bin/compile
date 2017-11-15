@@ -27,7 +27,7 @@ if [[ -f "${BUILD_DIR}/pom.xml" ]] || # Maven
     mkdir -p "${BUILD_DIR}/bin/"
     agent_jar="${BUILD_DIR}/bin/heroku-metrics-agent.jar"
     curl --retry 3 -s -o ${agent_jar} \
-      -L ${HEROKU_METRICS_JAR_URL:-"http://repo1.maven.org/maven2/com/heroku/agent/heroku-java-metrics-agent/3.0/heroku-java-metrics-agent-3.0.jar"}
+      -L ${HEROKU_METRICS_JAR_URL:-"http://repo1.maven.org/maven2/com/heroku/agent/heroku-java-metrics-agent/3.1/heroku-java-metrics-agent-3.1.jar"}
     if [[ ! -f ${agent_jar} ]]; then
         indent "WARNING: failed to install metrics agent!"
     fi
