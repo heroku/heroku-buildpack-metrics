@@ -15,20 +15,3 @@ BUILD_DIR=$1
 arrow "Setting up .profile.d to automatically run metrics agent..."
 mkdir -p "${BUILD_DIR}/.profile.d"
 cp .profile.d/heroku-metrics-daemon.sh "${BUILD_DIR}/.profile.d"
-
-if [[ -f "${BUILD_DIR}/pom.xml" ]] || # Maven
-   [[ -f "${BUILD_DIR}/build.gradle" ]] || # Gradle
-   [[ -f "${BUILD_DIR}/build.sbt" ]] || # Scala
-   [[ -d "${BUILD_DIR}/target/resolution-cache" ]] || # Scala (sbt-heroku)
-   [[ -f "${BUILD_DIR}/project.clj" ]] || # Clojure
-   [[ -f "${BUILD_DIR}/target/dependency/webapp-runner.jar" ]] || # Tomcat
-   [[ -d "${BUILD_DIR}/.jdk" ]]; then # heroku/jvm
-    arrow "Installing Java metrics agent"
-    mkdir -p "${BUILD_DIR}/bin/"
-    agent_jar="${BUILD_DIR}/bin/heroku-metrics-agent.jar"
-    curl --retry 3 -s -o ${agent_jar} \
-      -L ${HEROKU_METRICS_JAR_URL:-"http://repo1.maven.org/maven2/com/heroku/agent/heroku-java-metrics-agent/3.3/heroku-java-metrics-agent-3.3.jar"}
-    if [[ ! -f ${agent_jar} ]]; then
-        indent "WARNING: failed to install metrics agent!"
-    fi
-fi
