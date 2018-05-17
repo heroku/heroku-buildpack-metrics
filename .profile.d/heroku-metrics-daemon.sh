@@ -2,7 +2,7 @@
 
 # don't do anything if we don't have a metrics url.
 if [[ -z "$HEROKU_METRICS_URL" ]] || [[ "${DYNO}" = run\.* ]]; then
-    return 0
+    exit 0
 fi
 
 
@@ -12,7 +12,7 @@ BUILD_DIR=/tmp
 DOWNLOAD_URL=$(curl --retry 3 -s https://agentmon-releases.s3.amazonaws.com/latest)
 if [ -z "${DOWNLOAD_URL}" ]; then
     echo "!!!!! Failed to find latest agentmon. Please report this as a bug. Metrics collection will be disabled this run."
-    return 0
+    exit 0
 fi
 
 BASENAME=$(basename "${DOWNLOAD_URL}")
