@@ -2,8 +2,7 @@
 
 This buildpack sets up the necessary machinery to
 utilize
-[Heroku's Language Metrics](https://devcenter.heroku.com/articles/language-runtime-metrics) feature,
-which currently supports the JVM only.
+[Heroku's Language Metrics](https://devcenter.heroku.com/articles/language-runtime-metrics) feature.
 
 ## How does it affect my slug?
 
