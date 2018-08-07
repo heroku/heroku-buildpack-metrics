@@ -27,8 +27,8 @@ If you belong to the Heroku org, you can release a new version of the buildpack
 by running the following command:
 
 ```
-$ git reset --hard origin/master
-$ heroku buildkits:publish heroku/metrics
+$ git tag vXXX
+$ heroku buildpacks:publish heroku/metrics vXXX
 ```
 
 This will publish whatever is in the repo (including dirty changes), which is why
