@@ -31,8 +31,9 @@ $ git tag vXXX
 $ heroku buildpacks:publish heroku/metrics vXXX
 ```
 
-This will publish whatever is in the repo (including dirty changes), which is why
-we suggest running `git reset` first.
+This will publish the tag `vXXX` as a new version of the
+`heroku/metrics` buildpack. If you get a 401 you may not have the right
+permissions to publish. Check with @jkutner
 
 ## Testing
 
