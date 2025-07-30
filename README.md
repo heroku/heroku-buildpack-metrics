@@ -22,13 +22,3 @@ $ heroku buildpacks:publish heroku/metrics vXXX
 This will publish the tag `vXXX` as a new version of the
 `heroku/metrics` buildpack. If you get a 401 you may not have the right
 permissions to publish. Check with @jkutner
-
-## Testing
-
-This buildpack uses [Hatchet](https://github.com/heroku/hatchet) to run integration tests. To run them local
-make sure you have [Ruby](https://www.ruby-lang.org/) installed, then execute:
-
-```sh-session
-$ bundle install
-$ bundle exec rspec spec/
-```
