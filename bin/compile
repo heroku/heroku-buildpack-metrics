@@ -37,7 +37,7 @@ case "$STATUS" in
 			The \`heroku/metrics\` buildpack is no longer needed. Please remove it
 			from your application by running:
 
-				$ buildpacks:remove heroku/metrics
+				$ heroku buildpacks:remove heroku/metrics
 		EOF
 		;;
 	barnes-needs-upgrade)
@@ -57,7 +57,7 @@ case "$STATUS" in
 
 			Remove this buildpack, and then re-deploy:
 
-				$ buildpacks:remove heroku/metrics
+				$ heroku buildpacks:remove heroku/metrics
 				$ git push heroku main
 		EOF
 		;;
@@ -79,7 +79,7 @@ case "$STATUS" in
 			If your application does not rely on this buildpack, please remove it by
 			running:
 
-				$ buildpacks:remove heroku/metrics
+				$ heroku buildpacks:remove heroku/metrics
 
 			https://github.com/heroku/heroku-buildpack-metrics/issues
 		EOF
