@@ -14,3 +14,14 @@ barnes_version() {
   local gemfile_lock="$1"
   grep -E '^[[:space:]]+barnes[[:space:]]+\(' "$gemfile_lock" | sed -E 's/.*barnes \(([^)]+)\).*/\1/'
 }
+
+# Determines which string is greater or equal
+#
+# ```
+# version_gte "1.0.0" "1.0.0"; echo $? # => 0
+# version_gte "1.0.1" "1.0.0"; echo $? # => 0
+# version_gte "1.0.0" "1.0.1"; echo $? # => 1
+# ```
+version_gte() {
+  [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
+}
