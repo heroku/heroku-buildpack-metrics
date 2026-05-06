@@ -1,5 +1,8 @@
 #!/bin/bash
 
+BUILDPACK_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
+source "${BUILDPACK_DIR}/lib/output.sh"
+
 arrow() {
   echo '----->' "$@"
 }
