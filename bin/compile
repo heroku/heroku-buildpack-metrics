@@ -3,6 +3,7 @@ set -euo pipefail
 
 BUILDPACK_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 source "${BUILDPACK_DIR}/lib/output.sh"
+source "${BUILDPACK_DIR}/lib/utils.sh"
 
 BUILD_DIR=$1
 #CACHE_DIR=$2
