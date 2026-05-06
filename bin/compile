@@ -9,6 +9,106 @@ BUILD_DIR=$1
 #CACHE_DIR=$2
 #ENV_DIR=$3
 
-output::step "Setting up .profile.d to automatically run metrics agent..."
-mkdir -p "${BUILD_DIR}/.profile.d"
-cp .profile.d/heroku-metrics-daemon.sh "${BUILD_DIR}/.profile.d"
+if [[ -f "${BUILD_DIR}/Gemfile.lock" ]]; then
+	output::indent <<< "Detected \`Gemfile.lock\`"
+	BARNES_VERSION=$(barnes_version "${BUILD_DIR}/Gemfile.lock" || true)
+	if [[ -n "$BARNES_VERSION" ]]; then
+		output::indent <<< "Detected \`barnes\` gem version \`${BARNES_VERSION}\`"
+		if version_gte "$BARNES_VERSION" "1.0.0"; then
+			STATUS="barnes-good"
+		else
+			STATUS="barnes-needs-upgrade"
+		fi
+	else
+		output::indent <<< "Missing \`barnes\` gem from \`Gemfile.lock\`"
+		STATUS="missing-barnes"
+	fi
+else
+	output::indent <<< "Missing \`Gemfile.lock\`"
+	STATUS="missing-gemfile-lock"
+fi
+
+case "$STATUS" in
+	barnes-good)
+		output::indent <<< "Metrics daemon not needed, skipping install."
+		output::warning <<-EOF
+			Warning: Please remove this buildpack
+
+			The \`heroku/metrics\` buildpack is no longer needed. Please remove it
+			from your application by running:
+
+				$ buildpacks:remove heroku/metrics
+		EOF
+		;;
+	barnes-needs-upgrade)
+		output::warning <<-EOF
+			Warning: Upgrade \`barnes\` gem
+
+			The \`heroku/metrics\` buildpack is used exclusively for the Heroku Ruby
+			Language Metrics (beta). The functionality of this buildpack is being
+			moved into the \`barnes\` gem and future releases gate behavior based on the
+			version of this gem in the \`Gemfile.lock\`.
+
+			Upgrade your \`barnes\` version and check the results into git:
+
+				$ bundle update barnes
+				$ git add Gemfile.lock
+				$ git commit -m "Upgrade barnes 1.0.0+"
+
+			Remove this buildpack, and then re-deploy:
+
+				$ buildpacks:remove heroku/metrics
+				$ git push heroku main
+		EOF
+		;;
+	missing-barnes|missing-gemfile-lock)
+		output::warning <<-EOF
+			Warning: Cannot determine barnes version
+
+			The \`heroku/metrics\` buildpack is used exclusively for the Heroku Ruby
+			Language Metrics (beta). The functionality of this buildpack is being
+			moved into the \`barnes\` gem and future releases gate behavior based on the
+			version of this gem in the \`Gemfile.lock\`.
+
+			To remove this warning ensure there is a \`Gemfile.lock\` in the root of your
+			application and that it contains \`gem 'barnes'\`:
+
+			     \$ ls -la
+			$(ls -la "$BUILD_DIR" | sed 's/^/     /')
+
+			If your application does not rely on this buildpack, please remove it by
+			running:
+
+				$ buildpacks:remove heroku/metrics
+
+			https://github.com/heroku/heroku-buildpack-metrics/issues
+		EOF
+		;;
+	*)
+		output::warning <<-EOF
+			Warning: Internal error
+
+			The \`heroku/metrics\` buildpack encountered an unexpected state:
+
+				STATUS=${STATUS}
+
+			Please search or file an issue on GitHub. Please include
+			your build logs and the contents of the root of your application:
+
+			https://github.com/heroku/heroku-buildpack-metrics/issues
+		EOF
+		;;
+esac
+
+case "$STATUS" in
+	barnes-good)
+		# Barnes doesn't need `heroku/metrics`, install nothing
+		;;
+	*)
+		# Install the metrics agent for all statuses except barnes-good,
+		# which has metrics support built in.
+		output::step "Setting up .profile.d to automatically run metrics agent..."
+		mkdir -p "${BUILD_DIR}/.profile.d"
+		cp .profile.d/heroku-metrics-daemon.sh "${BUILD_DIR}/.profile.d"
+		;;
+esac
