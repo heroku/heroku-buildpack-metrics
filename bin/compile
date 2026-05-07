@@ -6,7 +6,7 @@ source "${BUILDPACK_DIR}/lib/output.sh"
 source "${BUILDPACK_DIR}/lib/utils.sh"
 
 BUILD_DIR=$1
-#CACHE_DIR=$2
+CACHE_DIR="$2"
 #ENV_DIR=$3
 
 if [[ -f "${BUILD_DIR}/Gemfile.lock" ]]; then
@@ -27,6 +27,9 @@ else
 	output::indent <<< "Missing \`Gemfile.lock\`"
 	STATUS="missing-gemfile-lock"
 fi
+
+mkdir -p "${CACHE_DIR}/build-data/"
+jq -n --arg status "$STATUS" '{"barnes-status": $status}' > "${CACHE_DIR}/build-data/metrics.json"
 
 case "$STATUS" in
 	barnes-good)
