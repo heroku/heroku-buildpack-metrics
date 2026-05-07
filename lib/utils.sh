@@ -12,7 +12,7 @@ set -euo pipefail
 # ```
 barnes_version() {
   local gemfile_lock="$1"
-  grep -E '^[[:space:]]+barnes[[:space:]]+\(' "$gemfile_lock" | sed -E 's/.*barnes \(([^)]+)\).*/\1/'
+  grep -E '^[[:space:]]+barnes[[:space:]]+\([0-9]+\.' "$gemfile_lock" | head -1 | sed -E 's/.*barnes \(([^)]+)\).*/\1/'
 }
 
 # Determines which string is greater or equal
