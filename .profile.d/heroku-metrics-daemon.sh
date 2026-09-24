@@ -9,7 +9,7 @@ setup_metrics() {
     STARTTIME=$(date +%s)
     BUILD_DIR=/tmp
 
-    DOWNLOAD_URL=$(curl --retry 3 -s https://agentmon-releases.s3.amazonaws.com/latest)
+    DOWNLOAD_URL=$(curl --fail --no-progress-meter --retry 3 --retry-connrefused --connect-timeout 5 --max-time 30 https://agentmon-releases.s3.amazonaws.com/latest)
     if [ -z "${DOWNLOAD_URL}" ]; then
         echo "!!!!! Failed to find latest agentmon. Please report this as a bug. Metrics collection will be disabled this run."
         return 1
@@ -17,7 +17,10 @@ setup_metrics() {
 
     BASENAME=$(basename "${DOWNLOAD_URL}")
 
-    curl -L --retry 3 -s -o "${BUILD_DIR}/${BASENAME}" "${DOWNLOAD_URL}"
+    if ! curl -L --fail --no-progress-meter --retry 3 --retry-connrefused --connect-timeout 5 --max-time 30 -o "${BUILD_DIR}/${BASENAME}" "${DOWNLOAD_URL}"; then
+        echo "!!!!! Failed to download agentmon from ${DOWNLOAD_URL}. Metrics collection will be disabled this run."
+        return 1
+    fi
 
     # Ensure the bin folder exists, if not already.
     mkdir -p "${BUILD_DIR}/bin"
